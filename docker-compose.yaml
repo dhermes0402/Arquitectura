@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: contenedor_wordpress_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress_user
+      MYSQL_PASSWORDD: wordpress_pass
+    networks:
+      - wordpress_network
+  wordpress:
+    image: wordpress
+    container_name: contenedor_wordpress
+    restart: always
+    ports: 
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: contenedor_wordpress_db
+      WORDPRESS_DB_USER: wordpress_user
+      WORDPRESS_DB_PASSWORD: wordpress_pass
+      WORDPRESS_DB_NAME: wordpress
+    networks:
+      - wordpress_network
+
+networks:
+  wordpress_network:
+    driver: bridge
+
+  
