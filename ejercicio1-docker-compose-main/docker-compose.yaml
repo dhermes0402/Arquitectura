@@ -1,0 +1,46 @@
+services:
+
+  contenedor_bd:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: empresa
+    volumes:
+      - micro_db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app_network
+
+  login:
+    build: ./login
+    ports:
+      - "5000:5000"
+    networks:
+      - app_network
+    depends_on:
+      - contenedor_bd
+
+  api:
+    build: ./api
+    ports:
+      - "5001:5001"
+    networks:
+      - app_network
+    depends_on:
+      - contenedor_bd
+
+  php:
+    build: ./php
+    ports:
+      - "8080:80"
+    networks:
+      - app_network
+    depends_on:
+      - login
+      - api
+
+volumes:
+  micro_db_data:
+
+networks:
+  app_network:
