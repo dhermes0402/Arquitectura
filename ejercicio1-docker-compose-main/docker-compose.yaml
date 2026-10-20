@@ -15,6 +15,11 @@ services:
     build: ./login
     ports:
       - "5000:5000"
+    environment:
+      DB_HOST: contenedor_bd
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME_AUTH: authentication
     networks:
       - app_network
     depends_on:
@@ -24,15 +29,25 @@ services:
     build: ./api
     ports:
       - "5001:5001"
+    environment:
+      DB_HOST: contenedor_bd
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME_SHOP: shop
+      LOGIN_SERVICE: http://login:5000
     networks:
       - app_network
     depends_on:
       - contenedor_bd
+      - login
 
   php:
     build: ./php
     ports:
       - "8080:80"
+    environment:
+      LOGIN_SERVICE: http://localhost:5000
+      API_SERVICE: http://localhost:5001
     networks:
       - app_network
     depends_on:
